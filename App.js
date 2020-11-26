@@ -1,31 +1,55 @@
-import { StatusBar } from 'expo-status-bar';
 import React,{useState} from 'react';
-import { StyleSheet, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Text, View, FlatList  } from 'react-native';
+
+import Header from "./components/header";
+import TodoItem from "./components/todoItem";
+import AddTodo from "./components/addTodo";
+
 
 export default function App() {
 
-  const [name,setName] = useState('Hello');
-  const [age,setAge] = useState('30');
+    const [todos, setTodos] = useState([
+    {text:'buy coffee', key: '1'},
+    {text:'create an app', key: '2'},
+    {text:'play on the switch', key: '3'}
+  ]);
+
+const pressHandler = (key) => {
+     setTodos((prevTodos) => {
+         return prevTodos.filter(todo => todo.key != key);
+     });
+}
+
+const submitHandler = (text) => {
+ setTodos( (prevTodos) =>{
+return [
+    {text: text, key: Math.random().toString() },
+    ...prevTodos
+]
+ })
+}
 
   return (
     <View style={styles.container}>
-<Text>Enter Name:</Text>
-      <TextInput
-          multiline
-          style={styles.input}
-     placeholder='e.g. John'
-      onChangeText={(val)=>setName(val)}/>
 
-      <Text>Enter Age:</Text>
-      <TextInput
-          keyboardType='numeric'
-          style={styles.input}
-          placeholder='e.g. 20'
-          onChangeText={(val)=>setAge(val)}/>
+      {/*header*/}
+       <Header/>
+      <View style={styles.content}>
 
+          <AddTodo submitHandler={submitHandler}/>
 
-<Text>name:{name}, age:{age}</Text>
+      {/*to form*/}
+      <View style={styles.list}>
+<FlatList
+data={todos}
+renderItem={({item}) =>(
+   <TodoItem item={item} pressHandler={pressHandler}/>
+)}
 
+/>
+
+      </View>
+      </View>
     </View>
   );
 }
@@ -34,26 +58,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  header:{
-    backgroundColor: 'pink',
-    padding:20,
-  },
-  boldText:{
-    fontWeight:'bold',
-  },
-  body:{
-    backgroundColor:'yellow',
-    padding:20,
-  },
-  input:{
-    borderWidth:1,
-    borderColor:'#777',
-    padding:8,
-    margin:10,
-    width:200,
-  },
-
+    content:{
+      padding: 40,
+    },
+    list:{
+      marginTop: 20,
+    },
 });
